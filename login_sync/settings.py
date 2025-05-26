@@ -25,7 +25,12 @@ SECRET_KEY = 'django-insecure-cywk(viziw&grk=wt1n69bjay*jr(7i4aa@$kfcdf9x)edz^n5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['myprojekt-3.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'myprojekt.onrender.com',  # <-- сюда надо добавить домен Render
+]
+
 
 
 
