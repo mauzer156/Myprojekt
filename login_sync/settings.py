@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'myprojekt.onrender.com',  # <-- сюда надо добавить домен Render
+    'login-k06f.onrender.com',  # <-- сюда надо добавить домен Render
 ]
 
 
