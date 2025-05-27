@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import User  # ✅ Вот это надо было добавить!
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import check_password
 
 # Временное хранилище для логина и пароля
 TEMP_CREDENTIALS = {"username": None, "password": None}
@@ -9,7 +9,7 @@ TEMP_CREDENTIALS = {"username": None, "password": None}
 @api_view(['GET'])
 def latest_user(request):
     try:
-        user = User.objects.latest('id')  # ✅ Работает только если User импортирован
+        user = User.objects.latest('id')
         return Response({
             "username": user.username,
             "email": user.email
@@ -22,14 +22,31 @@ def login(request):
     username = request.data.get("username")
     password = request.data.get("password")
 
-    if not username or not password:
-        return Response(False, status=400)  # неверный запрос
+    print(f"\n🔌 Получены данные от расширения:")
+    print(f"    ➤ username: {username}")
+    print(f"    ➤ password: {password}")
 
-    user = authenticate(username=username, password=password)
-    if user is not None:
-        return Response(True)
-    else:
-        return Response(False, status=401)  # неверные данные
+    if not username or not password:
+        print("⛔ Не передан логин или пароль")
+        return Response(False, status=400)
+
+    try:
+        user = User.objects.get(username=username)
+        print(f"📦 Данные из БД для {username}:")
+        print(f"    ➤ username: {user.username}")
+        print(f"    ➤ hashed password (из базы): {user.password}")
+
+        # Проверка пароля вручную
+        if check_password(password, user.password):
+            print("✅ Пароль совпадает (check_password)")
+            return Response(True)
+        else:
+            print("❌ Пароль НЕ совпадает (check_password)")
+            return Response(False, status=401)
+
+    except User.DoesNotExist:
+        print("❌ Пользователь не найден в базе")
+        return Response(False, status=401)
 
 @api_view(['GET'])
 def get_credentials(request):
