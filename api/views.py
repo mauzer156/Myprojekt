@@ -23,15 +23,13 @@ def login(request):
     password = request.data.get("password")
 
     if not username or not password:
-        return Response({"success": False, "detail": "Username and password required"}, status=400)
+        return Response(False, status=400)  # неверный запрос
 
     user = authenticate(username=username, password=password)
     if user is not None:
-        TEMP_CREDENTIALS["username"] = username
-        TEMP_CREDENTIALS["password"] = password
-        return Response({"success": True})
+        return Response(True)
     else:
-        return Response({"success": False, "detail": "Invalid credentials"}, status=401)
+        return Response(False, status=401)  # неверные данные
 
 @api_view(['GET'])
 def get_credentials(request):

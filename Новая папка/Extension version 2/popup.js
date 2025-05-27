@@ -6,19 +6,19 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   const status = document.getElementById("status");
 
   status.textContent = "⏳ Проверка...";
-  
+
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/login/", {
+    const response = await fetch("https://myprojekt.onrender.com/api/login/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password })
     });
 
-    const data = await response.json();
+    // response.json() должен вернуть true или false
+    const isSuccess = await response.json();
 
-    if (data.success) {
+    if (isSuccess === true) {
       status.textContent = "✅ Успешный вход!";
-      // здесь можно сделать переход или сообщение скрипту
     } else {
       status.textContent = "❌ Ошибка: Неверные данные";
     }
@@ -26,4 +26,5 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     status.textContent = "🚫 Сервер недоступен";
   }
 });
+
 
