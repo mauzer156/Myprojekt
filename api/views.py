@@ -1,9 +1,21 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User  # ✅ Вот это надо было добавить!
 
 # Временное хранилище для логина и пароля
 TEMP_CREDENTIALS = {"username": None, "password": None}
+
+@api_view(['GET'])
+def latest_user(request):
+    try:
+        user = User.objects.latest('id')  # ✅ Работает только если User импортирован
+        return Response({
+            "username": user.username,
+            "email": user.email
+        })
+    except User.DoesNotExist:
+        return Response({"detail": "No users found"}, status=404)
 
 @api_view(['POST'])
 def login(request):
