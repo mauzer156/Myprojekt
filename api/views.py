@@ -6,16 +6,16 @@ from django.contrib.auth.models import User  # ✅ Вот это надо был
 # Временное хранилище для логина и пароля
 TEMP_CREDENTIALS = {"username": None, "password": None}
 
-@api_view(['GET'])
-def latest_user(request):
-    try:
-        user = User.objects.latest('id')  # ✅ Работает только если User импортирован
-        return Response({
-            "username": user.username,
-            "email": user.email
-        })
-    except User.DoesNotExist:
-        return Response({"detail": "No users found"}, status=404)
+@api_view(['POST'])
+def login(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    user = authenticate(username=username, password=password)
+    if user:
+        return Response(True)
+    else:
+        return Response(False, status=401)
 
 @api_view(['POST'])
 def login(request):
