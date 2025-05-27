@@ -2,12 +2,16 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password
+from django.views.decorators.csrf import csrf_exempt
 
 # Временное хранилище для логина и пароля
 TEMP_CREDENTIALS = {"username": None, "password": None}
 
 @api_view(['GET'])
 def latest_user(request):
+    """
+    Возвращает последнего зарегистрированного пользователя (по ID).
+    """
     try:
         user = User.objects.latest('id')
         return Response({
@@ -17,8 +21,12 @@ def latest_user(request):
     except User.DoesNotExist:
         return Response({"detail": "No users found"}, status=404)
 
+@csrf_exempt
 @api_view(['POST'])
 def login(request):
+    """
+    Получает логин и пароль от расширения, проверяет в базе данных.
+    """
     username = request.data.get("username")
     password = request.data.get("password")
 
@@ -39,6 +47,11 @@ def login(request):
         # Проверка пароля вручную
         if check_password(password, user.password):
             print("✅ Пароль совпадает (check_password)")
+
+            # Сохраняем во временное хранилище
+            TEMP_CREDENTIALS["username"] = username
+            TEMP_CREDENTIALS["password"] = password
+
             return Response(True)
         else:
             print("❌ Пароль НЕ совпадает (check_password)")
@@ -50,6 +63,9 @@ def login(request):
 
 @api_view(['GET'])
 def get_credentials(request):
+    """
+    Возвращает последние сохранённые логин и пароль и обнуляет хранилище.
+    """
     if TEMP_CREDENTIALS["username"] and TEMP_CREDENTIALS["password"]:
         creds = TEMP_CREDENTIALS.copy()
         TEMP_CREDENTIALS["username"] = None
