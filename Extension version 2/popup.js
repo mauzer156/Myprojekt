@@ -14,11 +14,14 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
       body: JSON.stringify({ username, password })
     });
 
-    // response.json() должен вернуть true или false
     const isSuccess = await response.json();
 
     if (isSuccess === true) {
       status.textContent = "✅ Успешный вход!";
+      chrome.storage.local.set({ loginSyncUsername: username });
+
+      // Открытие сайта
+      chrome.tabs.create({ url: "https://simpleminecraft.ru/login.html" });
     } else {
       status.textContent = "❌ Ошибка: Неверные данные";
     }
@@ -26,5 +29,3 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     status.textContent = "🚫 Сервер недоступен";
   }
 });
-
-
