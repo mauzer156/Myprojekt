@@ -1,9 +1,10 @@
+
 from django.urls import path
-from .views import login, get_credentials, latest_user
+from .views import track_cabinet_click, login, get_credentials, latest_user
 
 urlpatterns = [
-    path('login/', login),
-    path('get-credentials/', get_credentials),
-    path('latest-user/', latest_user),  # 👈 добавили
+    path('log/', track_cabinet_click, name='track-click'),
+    path('login/', login, name='login'),
+    path('get_credentials/', get_credentials, name='get-credentials'),
+    path('latest_user/', latest_user, name='latest-user'),
 ]
-
