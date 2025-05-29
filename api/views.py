@@ -3,6 +3,33 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+from .models import CabinetClickLog
+
+@csrf_exempt
+def track_cabinet_click(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            login = data.get('login')
+            action = data.get('action')
+            timestamp = data.get('timestamp')  # Можно использовать, но не обязательно
+
+            if not login or not action:
+                return JsonResponse({'error': 'Missing login or action'}, status=400)
+
+            CabinetClickLog.objects.create(
+                login=login,
+                action=action
+                # timestamp добавится автоматически
+            )
+            return JsonResponse({'status': 'ok'}, status=200)
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 # Временное хранилище для логина и пароля
 TEMP_CREDENTIALS = {"username": None, "password": None}
