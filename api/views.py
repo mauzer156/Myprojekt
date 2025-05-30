@@ -1,35 +1,20 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-import json
-from .models import CabinetClickLog
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import CabinetClickLogSerializer
 
-@csrf_exempt
+@api_view(['POST'])
 def track_cabinet_click(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            login = data.get('login')
-            action = data.get('action')
-            timestamp = data.get('timestamp')  # Можно использовать, но не обязательно
-
-            if not login or not action:
-                return JsonResponse({'error': 'Missing login or action'}, status=400)
-
-            CabinetClickLog.objects.create(
-                login=login,
-                action=action
-                # timestamp добавится автоматически
-            )
-            return JsonResponse({'status': 'ok'}, status=200)
-
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    serializer = CabinetClickLogSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 # Временное хранилище для логина и пароля
 TEMP_CREDENTIALS = {"username": None, "password": None}
