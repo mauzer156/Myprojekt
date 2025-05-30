@@ -9,10 +9,3 @@ class CabinetClickLog(models.Model):
         return f"{self.login} - {self.action} at {self.timestamp}"
 
 
-class ClickLog(models.Model):
-    log_entry = models.TextField()
-
-    def __str__(self):
-        return self.log_entry[:100]
-
-
