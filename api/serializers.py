@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import ClickLog
+from .models import CabinetClickLog
 
-class ClickLogSerializer(serializers.ModelSerializer):
+class CabinetClickLogSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ClickLog
-        fields = ['log_entry']
+        model = CabinetClickLog
+        fields = ['login', 'action', 'timestamp']
+
