@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -139,8 +140,11 @@ REST_FRAMEWORK = {
 }
 
 # CORS settings (для разработки)
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_HEADERS = [
+CORS_ALLOWED_ORIGINS = [
+    "chrome-extension://*",  # для всех расширений
+    "https://simpleminecraft.ru",  # если взаимодействует с сайтом
+]
+CORS_ALLOW_HEADERS = list(default_headers) + [
     'accept',
     'accept-encoding',
     'authorization',
@@ -159,3 +163,5 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+
+
